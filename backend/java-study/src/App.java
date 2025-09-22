@@ -1,5 +1,5 @@
 public class App {
     public static void main(String[] args) {
-        System.out.println("准备进行方法引用的学习");
+        System.out.println("方法引用学习完毕!");
     }
 }
