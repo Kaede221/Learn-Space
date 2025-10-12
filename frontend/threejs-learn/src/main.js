@@ -33,10 +33,41 @@ const init = () => {
 
   // 绘制完毕 添加到页面上 这个画布就是一个canvas
   document.body.appendChild(renderer.domElement);
+};
 
-  // 随后 传入场景和摄像机 渲染你画面
-  renderer.render(scene, camera);
+/**
+ * 绘制小正方体
+ */
+const createCube = () => {
+  /*
+  如果我们想要绘制一个立方体的话 那么我们需要告诉ThreeJS一些信息:
+  - 绘制的是什么图形
+  - 材质, 颜色是什么
+  - 网格, 物体的本身, 需要传入图形和材质
+  - 最后, 把物体添加到场景里面就行
+
+  在threejs中, 坐标轴是右手坐标系
+   */
+  // 创建图形 (立方缓冲几何体)
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  // 创建材质 这里使用的是简单的基础材质 (网格基础材质, 使用线+面+纯颜色描绘表面)
+  const material = new THREE.MeshBasicMaterial({ color: 0x6495ED });
+  // 创建物体网格 (网格物体对象)
+  const cube = new THREE.Mesh(geometry, material);
+
+  // 添加物体到场景中
+  scene.add(cube);
+
+  // 因为摄像机和物体重合了, 并且物体是单面渲染的, 所以需要移动一下摄像机 (也可以创建完相机再进行移动)
+  camera.position.z = 5;
 };
 
 // 调用初始化方法
 init();
+
+// 创建立方体
+createCube();
+
+// 最后进行渲染 不然没有效果
+// 因为渲染是一次新的, 不会因为有变化就重新渲染.
+renderer.render(scene, camera);
