@@ -16,6 +16,10 @@
       {
         "command": "code-learn.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "code-learn.helloWorldWarn",
+        "title": "Hello World Warn"
       }
     ]
   },
