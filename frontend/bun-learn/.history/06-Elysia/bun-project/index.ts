@@ -1,6 +1,22 @@
 // 使用 elysia 创建一个简单的API
 import { Elysia, t } from "elysia";
 
+// 为了数据持久化, 我们可以使用bun自带的数据库
+import { Database } from "bun:sqlite";
+
+// 初始化服务之前, 可以先初始化数据库
+const db = new Database("my_app.sqlite");
+// 创建一个USER表, 用来储存用户数据
+db.query(
+  `
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL
+  );
+  `
+).run();
+console.log("数据库 'my_app.sqlite' 已连接并初始化。");
+
 // 创建一个elysia实例
 const app = new Elysia();
 
@@ -63,11 +79,27 @@ app.post(
     // 但是一旦加上了下面的类型校验, 就不需要使用promise了, 所以这里就没有await之类的东西了
     const userData = content.body;
 
-    // 发一些数据回去,进行验证
-    return {
-      status: 200,
-      receivedData: userData,
-    };
+    // 这里的数据肯定是校验过的, 可以直接进行保存
+    try {
+      const query = db.query(`
+        INSERT INTO users (username) 
+        VALUES ($username)
+      `);
+
+      query.run({
+        $username: userData.username,
+      });
+
+      return {
+        status: "创建成功 (已存入数据库)",
+        receivedData: userData,
+      };
+    } catch (e) {
+      // 操作失败会自动返回500错误
+      console.error(e);
+      // Elysia 会自动处理错误并返回 500
+      throw new Error("数据库插入失败");
+    }
   },
   // 可以直接进行类型校验, 这样上面使用的时候, 就知道具体的类型了, 并且服务会自动进行校验, 类型不匹配就会报错
   {
@@ -76,6 +108,12 @@ app.post(
     }),
   }
 );
+
+// 可以添加读取的方法 比如获取所有的用户
+app.get("/users-all", () => {
+  const query = db.query(`SELECT * FROM users`);
+  return query.get();
+});
 
 // 最后, 启动服务器即可
 app.listen(3000);
