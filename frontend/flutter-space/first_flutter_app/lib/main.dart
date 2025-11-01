@@ -1,120 +1,95 @@
+// 这里引入了Material组件库, 这是Flutter默认提供的一套标准的移动端和Web端的设计语言
+// 对应的, 提供了各种现成的组件可以直接用
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+// 这个方法就是程序的入口, 相当于C++之类的main函数
+// void main() {
+//   // 这里的runApp接收了一个Widget参数, 进而当作一个APP运行, 展示
+//   runApp(const MyApp());
+// }
 
+// 该方法可以简写
+void main() => runApp(const MyApp());
+
+// 这个就是根组件, 也是整个应用的根组件
 class MyApp extends StatelessWidget {
+  // 最新版的写法, 需要提供一个key, 也可以不写, 不过上面就不能写const了
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // 应用名称
       title: 'Flutter Demo',
+      // 主题颜色
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // 配置应用首页的路由
+      home: const MyHomePage(title: '第一个Flutter程序'),
     );
   }
 }
 
+// 继承自StatefulWidget, 这代表这是一个有状态组件 (可变)
 class MyHomePage extends StatefulWidget {
+  // 这个是构造函数
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  // 包含了一个字符串信息
   final String title;
 
+  // 这里没有build方法, 而是把build放入了子组件中. 这是为了提高开发的灵活度
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // 只需要维护一个计数器, 所以需要定义一个状态
   int _counter = 0;
 
+  // 实现一个状态自增的方法
   void _incrementCounter() {
+    // 下面这个调用顺序为: 先++, 再调用setState方法
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }
 
+  // 构建页面的逻辑 第一次创建的时候, 会创建这样的类
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // Scaffold 是Material库中提供的页面脚手架, 提供了默认的导航栏, 标题和包含主屏幕的body属性.
     return Scaffold(
+      // 定义的应用程序栏
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+        // 标题内容
         title: Text(widget.title),
       ),
+      // center是一个完全居中的组件, 里面的东西都会被居中
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+        // 使用了column组件, 这个代表元素是竖着排列的
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
+          // 里面使用了两个文本, 分别对应提示和数字
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+            const Text('你已经点击了:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const Text('次'),
           ],
         ),
       ),
+
+      // 这个就是右下角的悬浮按钮
       floatingActionButton: FloatingActionButton(
+        // 配置了点击事件以及鼠标移上去的效果
         onPressed: _incrementCounter,
         tooltip: 'Increment',
+        // 悬浮按钮里面的内容
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
