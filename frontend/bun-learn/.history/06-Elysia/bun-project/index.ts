@@ -1,5 +1,5 @@
 // 使用 elysia 创建一个简单的API
-import Elysia from "elysia";
+import { Elysia, t } from "elysia";
 
 // 创建一个elysia实例
 const app = new Elysia();
@@ -54,6 +54,28 @@ app.get("/greet/:name", (content) => {
   }
   return "至少需要使用name参数";
 });
+
+// 对于POST方法, 差不多, 不过数据是存在body里面的了
+app.post(
+  "/users",
+  (content) => {
+    // body 是一个Promise, 所以需要使用await
+    // 但是一旦加上了下面的类型校验, 就不需要使用promise了, 所以这里就没有await之类的东西了
+    const userData = content.body;
+
+    // 发一些数据回去,进行验证
+    return {
+      status: 200,
+      receivedData: userData,
+    };
+  },
+  // 可以直接进行类型校验, 这样上面使用的时候, 就知道具体的类型了, 并且服务会自动进行校验, 类型不匹配就会报错
+  {
+    body: t.Object({
+      username: t.String({ minLength: 3 }),
+    }),
+  }
+);
 
 // 最后, 启动服务器即可
 app.listen(3000);
