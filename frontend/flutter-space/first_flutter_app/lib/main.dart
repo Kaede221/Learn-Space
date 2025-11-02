@@ -1,15 +1,10 @@
-// 这里引入了Material组件库, 这是Flutter默认提供的一套标准的移动端和Web端的设计语言
-// 对应的, 提供了各种现成的组件可以直接用
+// Material库是Google提供的一套统一的, 标准的组件库.
+// 文字, 排版, 动画等, 都可以直接统一, 它提供了多平台统一的交互体验
 import 'package:flutter/material.dart';
 
-// 这个方法就是程序的入口, 相当于C++之类的main函数
-// void main() {
-//   // 这里的runApp接收了一个Widget参数, 进而当作一个APP运行, 展示
-//   runApp(const MyApp());
-// }
-
-// 该方法可以简写
-void main() => runApp(const MyApp());
+// 启动Flutter程序, 需要runApp方法
+// 需要传入一个Widget, Flutter的启动就是从调用这个函数开始的
+main() => runApp(const MyApp());
 
 // 这个就是根组件, 也是整个应用的根组件
 class MyApp extends StatelessWidget {
@@ -19,9 +14,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // 应用名称
-      title: 'Flutter Demo',
-      // 主题颜色
+      // 窗口的标题内容, 可以不设置
+      // title: 'Flutter Demo',
+      // 设置整个窗口的主题内容
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
