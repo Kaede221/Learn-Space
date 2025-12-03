@@ -77,6 +77,10 @@ class _MainPageState extends State<MainPage> {
                   ),
                   // 密码 一般是看不到的, 需要设置一下属性
                   obscureText: true,
+                  onSubmitted: (str) => {
+                    // 对于 submit, 只要回车 就会获取输入框里面的东西了
+                    print(str),
+                  },
                 ),
 
                 // 按钮组件 也可以进行美化, 使用Container包裹就好

@@ -4,11 +4,8 @@ void main(List<String> args) {
   runApp(MainPage());
 }
 
-// 输入框是动态的 有状态
-// 比如说需要搜索, 或者是实现一个登陆页面, 那么就会需要一个输入框组件
-// 一个输入框需要一个controller, 用来获取, 设置输入框的内容及监听变化
-// 另外, 还可以设置外观, 样式, 最大行数之类的
-// 可以通过onChanged和onSubmitted获取输入内容的回调和提交的回调方法
+// 滚动组件 SingleChildScrollView 单个组件的滚动
+// 可以在单个组件里面, 嵌套多个子组件出来.
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -17,88 +14,88 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // 两个输入框, 所以需要设置两个controller
-  final TextEditingController _accountController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  // 需要使用controller绑定滚动布局 进而实现滚动到底部和顶部的功能
+  ScrollController _controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        // 简单设置一个主题颜色, 好看一些
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
       home: Scaffold(
         appBar: AppBar(title: Text("Flutter 组件学习")),
-        // Stack 组件中, 直接写的话, 东西会直接堆在一起
-        body: Container(
-          alignment: Alignment.center,
-          // 设置一个内边距
-          padding: EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              spacing: 10,
-              // 简单实现一个登陆页面
-              children: [
-                Text(
-                  "登录",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-
-                TextField(
-                  // 配置controller
-                  controller: _accountController,
-                  // 需要调整样式
-                  decoration: InputDecoration(
-                    // 可以设置提示文本 不是placeholoder了
-                    hintText: "请输入账号",
-                    // 颜色叫做fillColor
-                    fillColor: const Color(0xFFF5F5DE),
-                    // 还需要设置允许展示填充色, 否则不会显示填充颜色的
-                    filled: true,
-                    // 可以设置没有边框, 但是有圆角效果
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(25),
+        // NOTE 这里使用stack是为了添加两个按钮, 去顶部的去底部的按钮
+        body: Stack(
+          children: [
+            // 为了布局可以滚动, 可以使用这个组件进行包裹
+            SingleChildScrollView(
+              child: Column(
+                // 相当于map方法
+                children: List.generate(
+                  100,
+                  (index) => Container(
+                    margin: EdgeInsets.all(10),
+                    color: Colors.blueAccent,
+                    height: 100,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "我是第 ${index + 1} 个",
+                      style: TextStyle(color: Colors.white, fontSize: 28),
                     ),
                   ),
                 ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    hintText: "请输入密码",
-                    fillColor: const Color(0xFFF5F5DE),
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  // 密码 一般是看不到的, 需要设置一下属性
-                  obscureText: true,
-                ),
-
-                // 按钮组件 也可以进行美化, 使用Container包裹就好
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: Colors.black,
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      // 可以直接通过controller 获取两个输入框里面的内容
-                      print("登录账号: ${_accountController.text}");
-                      print("登录密码: ${_passwordController.text}");
-                    },
-                    child: Text("登录", style: TextStyle(color: Colors.white)),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+
+            // 可以放置堆叠组件
+            Positioned(
+              right: 20,
+              top: 20,
+              // 为了获取点击事件, 需要添加事件监听
+              child: GestureDetector(
+                onTap: () => {print("去顶部")},
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    color: Colors.deepOrange,
+                  ),
+                  child: Text(
+                    "去顶部",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 20,
+              bottom: 20,
+              // 为了获取点击事件, 需要添加事件监听
+              child: GestureDetector(
+                onTap: () {
+                  print("去底部");
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                },
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    color: Colors.deepOrange,
+                  ),
+                  child: Text(
+                    "去底部",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
